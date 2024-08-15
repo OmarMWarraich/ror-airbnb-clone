@@ -8,6 +8,9 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+Money.rounding_mode= BigDecimal::ROUND_HALF_EVEN
+Money.locale_backend= :currency
+
 20.times do
   Property.create!({
     name: Faker::Lorem.unique.sentence(word_count: 3),
@@ -18,5 +21,6 @@
     city: Faker::Address.city,
     state: Faker::Address.state,
     country: Faker::Address.country,
+    price: Money.from_amount((50..100).to_a.sample, 'USD')
   })
 end
