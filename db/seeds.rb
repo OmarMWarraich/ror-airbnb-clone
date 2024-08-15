@@ -11,6 +11,12 @@
 Money.rounding_mode= BigDecimal::ROUND_HALF_EVEN
 Money.locale_backend= :currency
 
+user = User.create!({
+  email: 'test@test.com',
+  password: 'password',
+  password_confirmation: 'password'
+})
+
 7.times do |i|
   property = Property.create!({
     name: Faker::Lorem.unique.sentence(word_count: 3),
@@ -26,4 +32,18 @@ Money.locale_backend= :currency
 
   property.images.attach(io: File.open("db/images/property_#{i + 1}.jpg"), filename: property.name)
   property.images.attach(io: File.open("db/images/property_#{i + 8}.jpg"), filename: property.name)
+
+   ((5..10).to_a.sample).times do
+    Review.create!({
+      content: Faker::Lorem.paragraph(sentence_count: 10),
+      cleanliness_rating: (1..5).to_a.sample,
+      accuracy_rating: (1..5).to_a.sample,
+      checkin_rating: (1..5).to_a.sample,
+      communication_rating: (1..5).to_a.sample,
+      location_rating: (1..5).to_a.sample,
+      value_rating: (1..5).to_a.sample,
+      property: property,
+      user: user
+    })
+  end
 end
