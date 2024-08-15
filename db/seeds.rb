@@ -11,8 +11,8 @@
 Money.rounding_mode= BigDecimal::ROUND_HALF_EVEN
 Money.locale_backend= :currency
 
-20.times do
-  Property.create!({
+7.times do |i|
+  property = Property.create!({
     name: Faker::Lorem.unique.sentence(word_count: 3),
     description: Faker::Lorem.paragraph(sentence_count: 10),
     headline: Faker::Lorem.unique.sentence(word_count: 6),
@@ -23,4 +23,7 @@ Money.locale_backend= :currency
     country: Faker::Address.country,
     price: Money.from_amount((50..100).to_a.sample, 'USD')
   })
+
+  property.images.attach(io: File.open("db/images/property_#{i + 1}.jpg"), filename: property.name)
+  property.images.attach(io: File.open("db/images/property_#{i + 8}.jpg"), filename: property.name)
 end
