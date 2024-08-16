@@ -15,6 +15,9 @@ class Property < ApplicationRecord
   has_many :wishlists, dependent: :destroy
   has_many :wishlisted_users, through: :wishlists, source: :user, dependent: :destroy
 
+  has_many :reservations, dependent: :destroy
+  has_many :reserved_users, through: :reservations, source: :user, dependent: :destroy
+
   def update_average_rating
     update_column(:average_final_rating, reviews.average(:final_rating))
   end
@@ -23,5 +26,20 @@ class Property < ApplicationRecord
     return if user.nil?
 
     wishlisted_users.include?(user)
+  end
+
+  def available_dates
+    next_reservation = reservations.upcoming_reservations.first
+    current_reservation = reservations.current_reservations.first
+
+    if current_reservation.nil? && next_reservation.nil?
+      Date.tomorrow.strftime("%e %b")..(Date.tomorrow + 1.month).strftime("%e %b")
+    elsif current_reservation.nil?
+      Date.tomorrow.strftime("%e %b")..next_reservation.checkin_date.yesterday.strftime("%e %b")
+    elsif next_reservation.nil?
+      current_reservation.checkout_date.strftime("%e %b")..(Date.tomorrow + 1.month).strftime("%e %b")
+    else
+      current_reservation.checkout_date.strftime("%e %b")..next_reservation.checkin_date.yesterday.strftime("%e %b")
+    end
   end
 end
