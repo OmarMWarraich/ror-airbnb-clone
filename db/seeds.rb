@@ -20,13 +20,40 @@ description = <<-DESCRIPTION
 <p>Entire Property is yours!! Wish you fun and happy stay!!</p>
 DESCRIPTION
 
+pictures = []
+20.times do
+  pictures << URI.parse(Faker::LoremFlickr.image).open
+end
+
 user = User.create!({
-  email: 'test@test.com',
-  password: 'password',
-  password_confirmation: 'password'
+  email: 'test1@gmail.com',
+  password: '123456',
+  name: Faker::Lorem.unique.sentence(word_count: 3),
+  address_1: Faker::Address.street_address,
+  address_2: Faker::Address.street_name,
+  city: Faker::Address.city,
+  state: Faker::Address.state,
+  country: Faker::Address.country,
 })
 
-7.times do |i|
+user.picture.attach(io: pictures[0] , filename: user.name)
+
+19.times do |i|
+  random_user = User.create!({
+    email: "test#{i + 2}@gmail.com",
+    password: '123456',
+    name: Faker::Lorem.unique.sentence(word_count: 3),
+    address_1: Faker::Address.street_address,
+    address_2: Faker::Address.street_name,
+    city: Faker::Address.city,
+    state: Faker::Address.state,
+    country: Faker::Address.country,
+  })
+
+  random_user.picture.attach(io: pictures[i+1] , filename: user.name)
+end
+
+6.times do |i|
   property = Property.create!({
     name: Faker::Lorem.unique.sentence(word_count: 3),
     description: description,
@@ -37,21 +64,21 @@ user = User.create!({
     state: Faker::Address.state,
     country: Faker::Address.country,
     price: Money.from_amount((50..100).to_a.sample, 'USD'),
-    bathroom_count: (1..4).to_a.sample,
-    bed_count: (4..10).to_a.sample,
     bedroom_count: (2..5).to_a.sample,
+    bed_count: (4..10).to_a.sample,
     guest_count: (4..20).to_a.sample,
+    bathroom_count: (1..4).to_a.sample,
   })
 
   property.images.attach(io: File.open("db/images/property_#{i + 1}.jpg"), filename: property.name)
+  property.images.attach(io: File.open("db/images/property_7.jpg"), filename: property.name)
   property.images.attach(io: File.open("db/images/property_8.jpg"), filename: property.name)
   property.images.attach(io: File.open("db/images/property_9.jpg"), filename: property.name)
   property.images.attach(io: File.open("db/images/property_10.jpg"), filename: property.name)
   property.images.attach(io: File.open("db/images/property_11.jpg"), filename: property.name)
   property.images.attach(io: File.open("db/images/property_12.jpg"), filename: property.name)
-  property.images.attach(io: File.open("db/images/property_13.jpg"), filename: property.name)
 
-   ((5..10).to_a.sample).times do
+  ((5..10).to_a.sample).times do
     Review.create!({
       content: Faker::Lorem.paragraph(sentence_count: 10),
       cleanliness_rating: (1..5).to_a.sample,
@@ -61,7 +88,7 @@ user = User.create!({
       location_rating: (1..5).to_a.sample,
       value_rating: (1..5).to_a.sample,
       property: property,
-      user: user
+      user: User.all.sample
     })
   end
 end
