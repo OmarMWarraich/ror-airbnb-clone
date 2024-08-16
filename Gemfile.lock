@@ -310,7 +310,7 @@ DEPENDENCIES
   devise (~> 4.9)
   factory_bot_rails
   faker
-  image_processing (~> 1.13)
+  image_processing (~> 1.2)
   importmap-rails
   jbuilder
   money-rails (~> 1.15)
