@@ -8,11 +8,10 @@
           data-controller="share"
           data-action="click->share#toggleShareModal"
           class="px-3 pt-2 pb-3 hover:rounded-md hover:bg-gray-100 cursor-pointer"
-        >
+          >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" role="presentation" focusable="false" style="display: inline; fill: none; height: 16px; width: 16px; stroke: currentcolor; stroke-width: 2; overflow: visible;"><g fill="none"><path d="M27 18v9a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-9M16 3v23V3zM6 13l9.3-9.3a1 1 0 0 1 1.4 0L26 13"></path></g></svg>
           <span class="underline text-sm ms-1">Share</span>
         </span>
-
         <span 
           class="px-3 pt-2 pb-3 hover:rounded-md hover:bg-gray-100 cursor-pointer"
           data-controller="wishlist"
@@ -22,7 +21,7 @@
           data-wishlist-id="<%= @property.wishlists.find_by(user: current_user)&.id %>"
           data-action="click->wishlist#updateWishlistStatus"
           data-status="<%= @property.wishlisted_by?(current_user) %>"
-        >
+          >
           <svg xmlns="http://www.w3.org/2000/svg" 
             viewBox="0 0 32 32" 
             aria-hidden="true" 
@@ -32,7 +31,7 @@
             style="overflow: visible;"
             data-wishlist-target="icon"
             >
-              <path d="M16 28c7-4.73 14-10 14-17a6.98 6.98 0 0 0-7-7c-1.8 0-3.58.68-4.95 2.05L16 8.1l-2.05-2.05a6.98 6.98 0 0 0-9.9 0A6.98 6.98 0 0 0 2 11c0 7 7 12.27 14 17z"></path>
+            <path d="M16 28c7-4.73 14-10 14-17a6.98 6.98 0 0 0-7-7c-1.8 0-3.58.68-4.95 2.05L16 8.1l-2.05-2.05a6.98 6.98 0 0 0-9.9 0A6.98 6.98 0 0 0 2 11c0 7 7 12.27 14 17z"></path>
           </svg>
           <span 
             class="underline text-sm ms-1"
@@ -65,7 +64,6 @@
         </div>
       </div>
     </div>
-
     <!-- Property info -->
     <div class="mx-auto max-w-2xl px-4 pt-8 sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8 lg:px-8">
       <div class="lg:col-span-2 lg:pr-8">
@@ -93,12 +91,12 @@
           <% end %>
         </div>
       </div>
-
       <!-- Booking Component -->
       <div 
         class="mt-4 lg:mt-0 border rounded-xl p-6 shadow-xl h-auto"
         data-controller="booking"
         data-per-night-price="<%= humanized_money(@property.price) %>"
+        data-blocked-dates="<%= @blocked_dates %>
         >
         <h2 class="sr-only">Booking information</h2>
         <p class="text-lg font-light tracking-tight text-gray-900"><span class="text-2xl font-semibold"><%= humanized_money_with_symbol(@property.price) %></span> night</p>
@@ -110,10 +108,10 @@
               name="checkin" 
               id="checkin" 
               class="block w-full border-0 p-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-              placeholder="18/02/2024"
+              value="<%= Date.tomorrow.strftime('%Y-%m-%d') %%>"
+              data-booking-target="checkin"
               >
           </div>
-
           <div class="rounded-r-lg px-3 pb-1.5 pt-2.5 shadow-sm ring-1 ring-inset ring-gray-400 focus-within:ring-2 focus-within:ring-indigo-600">
             <label for="checkout" class="block text-xs font-medium text-gray-900">CHECK-OUT</label>
             <input 
@@ -121,10 +119,10 @@
               name="checkout" 
               id="checkout" 
               class="block w-full border-0 p-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-              placeholder="22/02/2024"
+               value="<%= (Date.tomorrow + 1.day).strftime('%Y-%m-%d') %>"
+data-booking-target="checkout"
               >
           </div>
-
         </div>
         <button 
           type="submit" 
@@ -153,12 +151,10 @@
           <p><%= currency_symbol %><span data-booking-target="totalAmount">0</span></p>
         </div>
       </div>
-
       <div class="py-10 lg:col-span-2 lg:col-start-1 lg:pr-8">
         <!-- Description and details -->
         <div class="border-t border-gray-200 pt-10 mt-4">
           <h3 class="sr-only">Description</h3>
-
           <div class="space-y-6">
             <p class="text-base text-gray-900"><%= @property.description.to_plain_text.truncate(400) %></p>
             <% if @property.description.to_plain_text.length > 400 %>
@@ -166,24 +162,20 @@
                 class="flex items-center gap-1"
                 data-controller="description"
                 data-action="click->description#toggleDescriptionModal"
-              >
+                >
                 <span class="font-medium underline">Show more</span>
                 <svg viewBox="0 0 18 18" role="presentation" aria-hidden="true" focusable="false" style="height: 12px; width: 12px; display: block; fill: var(--f-k-smk-x);"><path d="m4.29 1.71a1 1 0 1 1 1.42-1.41l8 8a1 1 0 0 1 0 1.41l-8 8a1 1 0 1 1 -1.42-1.41l7.29-7.29z" fill-rule="evenodd"></path></svg>
               </div>
-
               <%= render 'shared/modal', modalTriggerId: "description", content: 'properties/description_modal', content_params: {description: @property.description} %>
             <% end %>
           </div>
         </div>
       </div>
-
       <!-- Amenities -->
       <%= render :partial => 'properties/amenities', :locals => {:amenities => @property.amenities} %>
     </div>
-
     <!-- Reviews -->
     <%= render :partial => 'properties/reviews', :locals => {:property => @property} %>
   </main>
 </div>
-
 <%= render 'shared/modal', modalTriggerId: "share", content: 'properties/share_modal', content_params: { property: @property } %>
